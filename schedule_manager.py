@@ -12,15 +12,48 @@ def get_db_connection() -> pymysql.Connection:
 
 def add_schedule(cursor: Cursor):
     # Todo: 여기에 일정 추가 코드를 작성합니다.
-    raise NotImplementedError("함수 미구현")
+    title = input("제목: ")
+    description = input("내용: ")
+    start_datetime = input("시작 시간(yyyymmddhhmmss)")
+    end_datetime = input("종료 시간(yyyymmddhhmmss)")
+
+    sql = """
+        INSERT INTO schedules(title, description, start_datetime, end_datetime)
+        VALUES(%s, %s, %s, %s)
+      """
+
+    cursor.execute(sql, (title, description, start_datetime, end_datetime))
+    print("일정 추가 완료.")
 
 def get_schedules(cursor: Cursor):
     # Todo: 여기에 일정 정보를 가져오는 코드를 작성합니다.
-    raise NotImplementedError("함수 미구현")
+    sql = "SELECT id, title, description, start_datetime, is_completed FROM schedules"
+
+    cursor.execute(sql)
+    schedules = cursor.fetchall()
+    if not schedules:
+      print("등록된 일정이 없습니다.")
+      return
+
+    for schedule in schedules:
+      id, title, description, start_datetime, is_complete = schedule
+      status = "완료" if is_complete else "미완료"
+
+      print(f"[{id}] {title}")
+      print(f"상태 : {description}")
+      print(f"시간 : {start_datetime}")
+      if description:
+        print(f"설명: {description}")
+      print()
 
 def complete_schedule(cursor: Cursor):
     # Todo: 여기에 일정을 완료처리하는 코드를 작성합니다.
-    raise NotImplementedError("함수 미구현")
+    id = input("아이디 값: ")
+
+    sql = "UPDATE schedules SET is_completed = true WHERE id = %s"
+
+    cursor.execute(sql, (id,))
+    print("일정 완료")
 
 # 메뉴 나타내기
 def show_menu() -> str:
